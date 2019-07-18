@@ -1,0 +1,10 @@
+#Wed Oct 10 07:49:45 EDT 2018
+adapter.unique.id=interlok-activemq-solace
+adapter.fs.base.url=${adapter.base.url}/fs/${adapter.unique.id}
+adapter.base.url=file\://localhost/${user.dir}
+
+adapter.solace.url=smf://${SOLACE_HOST}:${SOLACE_PORT}
+adapter.solace.user=${SOLACE_USER}
+adapter.solace.password=${SOLACE_PASSWORD}
+
+adapter.activemq.url=tcp://${ACTIVEMQ_HOST}:${ACTIVEMQ_PORT}

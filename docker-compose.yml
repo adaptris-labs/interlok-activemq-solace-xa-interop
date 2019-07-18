@@ -1,0 +1,45 @@
+# docker-compose up //
+version: '3.3'
+
+services:
+  solace:
+    container_name: solace
+    image: solace/solace-pubsub-standard:latest
+    hostname: solace
+    shm_size: 1g
+    ulimits:
+      core: 1
+      nofile:
+        soft: 2448
+        hard: 38048
+    ports:
+      - '55555:55555'
+    environment:
+      - username_admin_globalaccesslevel=admin
+      - username_admin_password=admin
+      - system_scaling_maxconnectioncount=100
+  activemq:
+    container_name: activemq
+    image: rmohr/activemq:5.15.6-alpine
+    hostname: activemq
+    ports:
+      - '61616:61616'
+  interlok: 
+    image: adaptrislabs/interlok-activemq-solace-xa:latest
+    container_name: interlok-activemq-solace
+    hostname: interlok
+    environment:
+      - SOLACE_HOST=solace
+      - SOLACE_PORT=55555
+      - SOLACE_USER=admin
+      - SOLACE_PASSWORD=admin
+      - ACTIVEMQ_HOST=activemq
+      - ACTIVEMQ_PORT=61616
+    ports:
+      - '8080:8080'
+    depends_on:
+      - solace
+      - activemq
+    links:
+      - solace:solace
+      - activemq:activemq

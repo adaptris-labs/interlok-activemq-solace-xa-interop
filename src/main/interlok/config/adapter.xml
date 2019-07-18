@@ -1,0 +1,145 @@
+<adapter>
+  <unique-id>${adapter.unique.id}</unique-id>
+  <shared-components>
+    <lifecycle-strategy class="filtered-shared-component-start">
+      <exclude>solace-connection</exclude>
+    </lifecycle-strategy>
+    <connections>
+      <xa-jms-connection>
+        <unique-id>activemq-connection</unique-id>
+        <vendor-implementation class="basic-active-mq-xa-implementation">
+          <broker-url>${adapter.activemq.url}</broker-url>
+        </vendor-implementation>
+      </xa-jms-connection>
+      <xa-jms-connection>
+        <unique-id>solace-connection</unique-id>
+        <user-name>${adapter.solace.user}</user-name>
+        <password>${adapter.solace.password}</password>
+        <vendor-implementation class="xa-basic-solace-implementation">
+          <broker-url>${adapter.solace.url}</broker-url>
+          <message-vpn>default</message-vpn>
+        </vendor-implementation>
+      </xa-jms-connection>
+      <jms-connection>
+        <unique-id>non-xa-activemq-connection</unique-id>
+        <vendor-implementation class="basic-active-mq-implementation">
+          <broker-url>${adapter.activemq.url}</broker-url>
+        </vendor-implementation>
+      </jms-connection>
+      <jetty-embedded-connection>
+        <unique-id>jetty-connection</unique-id>
+      </jetty-embedded-connection>
+    </connections>
+    <services/>
+    <transaction-manager class="xa-cached-jms-transaction-manager">
+      <unique-id>TransactionManager</unique-id>
+      <lookup-name>TransactionManager</lookup-name>
+    </transaction-manager>
+  </shared-components>
+  <channel-list>
+    <channel>
+      <auto-start>false</auto-start>
+      <consume-connection class="shared-connection">
+        <lookup-name>activemq-connection</lookup-name>
+      </consume-connection>
+      <produce-connection class="shared-connection">
+        <lookup-name>solace-connection</lookup-name>
+      </produce-connection>
+      <workflow-list>
+        <standard-workflow>
+          <consumer class="xa-jms-consumer">
+            <unique-id>activemq-consumer</unique-id>
+            <destination class="configured-consume-destination">
+              <destination>jms:queue:Sample.T1</destination>
+            </destination>
+            <max-batch>255</max-batch>
+            <receive-wait>
+              <unit>MILLISECONDS</unit>
+              <interval>30000</interval>
+            </receive-wait>
+            <max-transaction-time>
+              <unit>MILLISECONDS</unit>
+              <interval>2000</interval>
+            </max-transaction-time>
+            <xa-resource-name>activemq-consumer</xa-resource-name>
+            <transaction-manager class="shared-transaction-manager">
+              <lookup-name>TransactionManager</lookup-name>
+            </transaction-manager>
+            <xa-exception-handler class="xa-wait-exception-handler">
+              <wait-period>
+                <unit>SECONDS</unit>
+                <interval>30</interval>
+              </wait-period>
+            </xa-exception-handler>
+            <recreate-consumer-on-error>true</recreate-consumer-on-error>
+            <global-lock>false</global-lock>
+          </consumer>
+          <service-collection class="service-list">
+            <services>
+              <log-message-service>
+                <unique-id>sleepy-williams</unique-id>
+                <log-level>DEBUG</log-level>
+              </log-message-service>
+            </services>
+          </service-collection>
+          <producer class="xa-jms-producer">
+            <unique-id>solace-producer</unique-id>
+            <destination class="configured-destination">
+              <destination>jms:topic:Sample.T2</destination>
+            </destination>
+            <message-translator class="text-message-translator"/>
+            <session-factory class="jms-default-producer-xa-session"/>
+            <cache-destination>true</cache-destination>
+            <xa-resource-name>solace-producer</xa-resource-name>
+            <transaction-manager class="shared-transaction-manager">
+              <lookup-name>TransactionManager</lookup-name>
+            </transaction-manager>
+          </producer>
+          <unique-id>activemq-solace-workflow</unique-id>
+        </standard-workflow>
+      </workflow-list>
+      <unique-id>ActiveMq-Solace-Channel</unique-id>
+    </channel>
+    <channel>
+      <consume-connection class="shared-connection">
+        <lookup-name>jetty-connection</lookup-name>
+      </consume-connection>
+      <produce-connection class="shared-connection">
+        <lookup-name>non-xa-activemq-connection</lookup-name>
+      </produce-connection>
+      <workflow-list>
+        <pooling-workflow>
+          <consumer class="jetty-message-consumer">
+            <unique-id>suspicious-saha</unique-id>
+            <destination class="configured-consume-destination">
+              <destination>/api/to-activemq</destination>
+            </destination>
+            <parameter-handler class="jetty-http-ignore-parameters"/>
+            <header-handler class="jetty-http-ignore-headers"/>
+          </consumer>
+          <service-collection class="service-list">
+            <unique-id>distracted-brattain</unique-id>
+            <services/>
+          </service-collection>
+          <producer class="jms-producer">
+            <destination class="configured-produce-destination">
+              <destination>jms:queue:Sample.T1</destination>
+            </destination>
+            <acknowledge-mode>CLIENT_ACKNOWLEDGE</acknowledge-mode>
+            <message-translator class="text-message-translator"/>
+            <delivery-mode>PERSISTENT</delivery-mode>
+            <session-factory class="jms-default-producer-session"/>
+          </producer>
+          <produce-exception-handler class="null-produce-exception-handler"/>
+          <unique-id>HTTP-to-ActiveMQ</unique-id>
+        </pooling-workflow>
+      </workflow-list>
+      <unique-id>http-activemq</unique-id>
+    </channel>
+
+  </channel-list>
+  <message-error-digester class="standard-message-error-digester">
+    <unique-id>ErrorDigest</unique-id>
+    <digest-max-size>100</digest-max-size>
+  </message-error-digester>
+</adapter>
