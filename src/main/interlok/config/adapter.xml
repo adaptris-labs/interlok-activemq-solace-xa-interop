@@ -33,7 +33,6 @@
     <services/>
     <transaction-manager class="xa-cached-jms-transaction-manager">
       <unique-id>TransactionManager</unique-id>
-      <lookup-name>TransactionManager</lookup-name>
     </transaction-manager>
   </shared-components>
   <channel-list>

@@ -25,11 +25,11 @@ adp.license.key=whatever-your-license-key-is
 * Once Interlok says it's started then you can push some data to activemq
 
 ```
-curl -is -XPOST -d'{"hello":"world"}' http://localhost:8080/api/to-activemq
-curl -is -XPOST -d'{"hello":"world"}' http://localhost:8080/api/to-activemq
-curl -is -XPOST -d'{"hello":"world"}' http://localhost:8080/api/to-activemq
-curl -is -XPOST -d'{"hello":"world"}' http://localhost:8080/api/to-activemq
-curl -is -XPOST -d'{"hello":"world"}' http://localhost:8080/api/to-activemq
+curl -i -XPOST -d'{"hello":"world"}' http://localhost:8080/api/to-activemq
+curl -i -XPOST -d'{"hello":"world"}' http://localhost:8080/api/to-activemq
+curl -i -XPOST -d'{"hello":"world"}' http://localhost:8080/api/to-activemq
+curl -i -XPOST -d'{"hello":"world"}' http://localhost:8080/api/to-activemq
+curl -i -XPOST -d'{"hello":"world"}' http://localhost:8080/api/to-activemq
 .... a bunch of times.
 ```
 
