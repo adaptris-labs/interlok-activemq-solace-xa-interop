@@ -19,7 +19,7 @@ ext {
   adapterSourceConfig = "${projectDir}/src/main/interlok/config"
   adapterTmpConfigDirectory = "${buildDir}/tmp/config-resolve"
 
-  log4j2Version='2.12.0'
+  log4j2Version='2.12.1'
   slf4jVersion='1.7.27'
   solaceVersion='10.6.3'
 }
