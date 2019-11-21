@@ -19,7 +19,7 @@ ext {
 
   log4j2Version='2.12.1'
   slf4jVersion='1.7.29'
-  solaceVersion='10.6.3'
+  solaceVersion='10.6.4'
 }
 
 distTar.enabled=false
