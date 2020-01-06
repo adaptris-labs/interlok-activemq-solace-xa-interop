@@ -7,7 +7,7 @@ plugins {
 }
 
 ext {
-  interlokCoreVersion = '3.9.2-RELEASE'
+  interlokCoreVersion = '3.9.3-RELEASE'
   releaseVersion = project.hasProperty('releaseVersion') ? project.getProperty('releaseVersion') : 'latest'
   repoUsername = project.hasProperty('repoUsername') ? project.getProperty('repoUsername') : 'specify in gradle.properties'
   repoPassword = project.hasProperty('repoPassword') ? project.getProperty('repoPassword') : 'specify in gradle.properties'
