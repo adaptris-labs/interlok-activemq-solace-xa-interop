@@ -2,7 +2,7 @@ import org.apache.tools.ant.taskdefs.condition.Os
 import org.apache.tools.ant.filters.*
 plugins {
   id "distribution"
-  id "com.palantir.docker" version "0.22.1"
+  id "com.palantir.docker" version "0.22.2"
   id 'com.palantir.docker-compose' version "0.22.2"
 }
 
