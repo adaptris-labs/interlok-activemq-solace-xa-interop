@@ -3,7 +3,7 @@
 ## What is this
 
 This is an complete interlok instance which basically show-cases ActiveMQ to Solace using XA; Since the optional `interlok-solace` package requires a license you will need one of those.
-There are 2 channels 
+There are 2 channels
 
 * HTTP-> ActiveMQ : http://localhost:8080/api/to-activemq -> that goes to an ActiveMQ Queue "Sample.T1"
 * ActiveMQ -> Solace : `jms:queue:Sample.T1` -> `jms:topic:Sample.T2` with XA configured; essentially, a JMS Queue to JMS Topic bridge with XA.
@@ -33,7 +33,7 @@ curl -i -XPOST -d'{"hello":"world"}' http://localhost:8080/api/to-activemq
 .... a bunch of times.
 ```
 
-* Login to the UI and start the `ActiveMq-Solace-Channel` channel from the dashboard and eventually you'll see something like: 
+* Login to the UI and start the `ActiveMq-Solace-Channel` channel from the dashboard and eventually you'll see something like:
     * This channel is set with auto-start=false so that we can see multiple messages in a single transactions
 
 ```
