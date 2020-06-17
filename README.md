@@ -1,4 +1,4 @@
-# interlok-activemq-solace-xa-demo
+# interlok-activemq-solace-xa-demo [![Actions Status](https://github.com/adaptris-labs/interlok-activemq-solace-xa-interop/workflows/check/badge.svg)](https://github.com/adaptris-labs/interlok-activemq-solace-xa-interop/actions)
 
 ## What is this
 
@@ -12,7 +12,8 @@ There are 2 channels
 
 * You'll need java of course because gradle is the build system.
 * Docker of course
-* Get yourself a license, and make a file called `license.properties.docker` in _src/main/interlok/config_
+* It uses our [parent build gradle component](https://github.com/adaptris-labs/interlok-build-parent/)
+* Get yourself a license, and make a file called `license-docker.properties` in _src/main/interlok/config_
 ```
 adp.license.key=whatever-your-license-key-is
 ```
@@ -51,6 +52,6 @@ You can control some behaviour by passing in project properties in the form *-Pp
 
 Property Key | Default Value | Description | Notes
 ------------ | ------------- | ----------- | -----
-releaseVersion|latest|The docker tag version | You will have to edit docker-compose.yml|
+dockerImageTag|latest|The docker tag version | You will have to edit docker-compose.yml|
 dockerImageName|adaptrislabs/interlok-solace| The docker image name|You will have to edit docker-compose.yml|
-buildEnv|docker|Change it to anything else to drive local properties from your hostname| This directly affects the way property files are sourced, by default it will be `variables.propertes.{buildEnv}`|
+buildEnv|docker|Change it to anything else to change your buildEnvironment| This directly affects the way property files are sourced, by default it will be `variables-{buildEnv}.properties`|
