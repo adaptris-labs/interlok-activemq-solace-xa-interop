@@ -2,3 +2,5 @@ gradle.properties
 *.lhrm32445
 build
 license.properties.docker
+license-docker.properties
+.gradle

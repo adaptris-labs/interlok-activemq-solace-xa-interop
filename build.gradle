@@ -1,194 +1,73 @@
-import org.apache.tools.ant.taskdefs.condition.Os
-import org.apache.tools.ant.filters.*
 plugins {
-  id "distribution"
   id "com.palantir.docker" version "0.25.0"
   id 'com.palantir.docker-compose' version "0.25.0"
 }
 
 ext {
-  interlokCoreVersion = '3.10.1-RELEASE'
-  releaseVersion = project.hasProperty('releaseVersion') ? project.getProperty('releaseVersion') : 'latest'
-  repoUsername = project.hasProperty('repoUsername') ? project.getProperty('repoUsername') : 'specify in gradle.properties'
-  repoPassword = project.hasProperty('repoPassword') ? project.getProperty('repoPassword') : 'specify in gradle.properties'
-  dockerImageName = project.hasProperty('dockerImageName') ? project.getProperty('dockerImageName') : "adaptrislabs/interlok-activemq-solace-xa"
 
-  buildEnv=project.hasProperty("buildEnv") ? project.getProperty("buildEnv") : "docker"
-  adapterSourceConfig = "${projectDir}/src/main/interlok/config"
-  adapterTmpConfigDirectory = "${buildDir}/tmp/config-resolve"
+  interlokParentGradle = project.findProperty('interlokParentGradle') ?: 'https://raw.githubusercontent.com/adaptris-labs/interlok-build-parent/master/build.gradle'
+  dockerImageName = project.findProperty('dockerImageName') ?: "adaptrislabs/interlok-activemq-solace-xa"
+  dockerImageTag = project.findProperty('dockerImageVersion') ?: "latest"
+  buildEnv=project.findProperty("buildEnv") ?: "docker"
+  includeWar='true'
+  // license-{buildEnv}.properties needs to be copied.
+  additionalTemplatedProperties = [
+    'license'
+  ]
+  // Ensure variable substitutions work for 'check'
+  interlokVerifyEnvironmentProperties = [
+    SOLACE_HOST: "localhost",
+    SOLACE_PORT: "55555",
+    SOLACE_USER: "admin",
+    SOLACE_PASSWORD: "admin",
+    ACTIVEMQ_HOST: "localhost",
+    ACTIVEMQ_PORT: "61616"
+  ]
 
-  log4j2Version='2.13.3'
-  slf4jVersion='1.7.30'
+  // If running in a CI pipeline, then interlokLicense might be a secret so
+  // we cater for that to 'check' work, w/o a license-docker.properties or similar.
+  interlokLicense= project.findProperty('interlokLicense') ?: "false"
+  interlokVerifySystemProperties = interlokLicense != "false" ? [ "interlok.license.key" : interlokLicense ] : [:]
   solaceVersion='10.9.0'
 }
 
-distTar.enabled=false
-distZip.enabled=true
 
-repositories {
-  mavenCentral()
-  maven { url "https://nexus.adaptris.net/nexus/content/groups/public" }
-  maven { url "https://nexus.adaptris.net/nexus/content/groups/interlok" }
-}
-
-ext.hostname = { ->
-  if (buildEnv.equalsIgnoreCase("docker")) {
-    return "docker"
-  }
-  if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-    return System.getenv("COMPUTERNAME")
-  }
-  return System.getenv("HOSTNAME")
-}
-
-def overwriteWithLocal(file, dir){
-  def localFile = "${dir}/${file}." + hostname()
-  if(new File(localFile).exists()){
-    ant.copy(file: localFile, tofile: "${dir}/${file}", overwrite: 'true', verbose: 'true')
-  }
-  delete fileTree(dir) { include "${file}.*" }
-}
-
-task localizeConfig(type: Copy) {
-  from "${adapterSourceConfig}"
-  into "${adapterTmpConfigDirectory}"
-  doLast {
-    overwriteWithLocal("variables.properties", "${adapterTmpConfigDirectory}")
-    overwriteWithLocal("log4j2.xml", "${adapterTmpConfigDirectory}")
-    overwriteWithLocal("license.properties", "${adapterTmpConfigDirectory}")
-  }
-}
-
-configurations {
-  war{}
-  interlokRuntime{}
-  interlokJavaDocs{}  
-  verify{}
-  all*.exclude group: 'c3p0'
-  all*.exclude group: 'commons-logging'
-  all*.exclude group: 'javamail'
-  all*.exclude group: 'javax.mail', module: 'mail'
-  all*.exclude group: 'org.glassfish.hk2.external'
-  all*.exclude group: 'xalan', module: 'xalan'
-  all*.exclude group: 'net.sf.saxon', module: 'saxon'
-  all*.exclude group: 'org.codehaus.woodstox'
-  all*.exclude group: 'org.eclipse.jetty.orbit', module: 'javax.mail.glassfish'
-}
-
-configurations.all {
-  resolutionStrategy.cacheChangingModulesFor 0, "seconds"
+allprojects {
+  apply from: "${interlokParentGradle}"
 }
 
 dependencies {
 
-  interlokRuntime ("com.adaptris:interlok-solace:$interlokCoreVersion") { changing= true}
-  interlokRuntime ("com.adaptris:interlok-core:$interlokCoreVersion") { changing= true}
-  interlokRuntime ("com.adaptris:interlok-common:$interlokCoreVersion") { changing= true}
-  interlokRuntime ("com.adaptris:interlok-varsub:$interlokCoreVersion") { changing=true }
-  interlokRuntime ("com.adaptris:interlok-boot:$interlokCoreVersion") { changing=true }
-  interlokRuntime ("com.adaptris:interlok-xinclude:$interlokCoreVersion") { changing=true }
-  interlokRuntime ("com.adaptris:interlok-logging:$interlokCoreVersion") { changing=true }
-  interlokRuntime ("com.adaptris:interlok-xa-jms:$interlokCoreVersion") { changing=true }
-  interlokRuntime ("com.adaptris:interlok-xa-solace:$interlokCoreVersion") { changing=true }
-  interlokRuntime ("com.adaptris:interlok-xa-activemq:$interlokCoreVersion") { changing=true }
-  interlokRuntime ("com.adaptris:interlok-xa-atomikos:$interlokCoreVersion") { changing=true }
+  interlokRuntime ("com.adaptris:interlok-solace:$interlokVersion") { changing= true}
+  interlokRuntime ("com.adaptris:interlok-xa-jms:$interlokVersion") { changing=true }
+  interlokRuntime ("com.adaptris:interlok-xa-solace:$interlokVersion") { changing=true }
+  interlokRuntime ("com.adaptris:interlok-xa-activemq:$interlokVersion") { changing=true }
+  interlokRuntime ("com.adaptris:interlok-xa-atomikos:$interlokVersion") { changing=true }
 
   interlokRuntime ("com.solacesystems:sol-jms:$solaceVersion")
   interlokRuntime ("com.solacesystems:sol-common:$solaceVersion")
   interlokRuntime ("com.solacesystems:sol-jcsmp:$solaceVersion")
 
-  interlokRuntime ("org.slf4j:slf4j-api:$slf4jVersion")
-  interlokRuntime ("org.slf4j:jcl-over-slf4j:$slf4jVersion")
-  interlokRuntime ("org.slf4j:jul-to-slf4j:$slf4jVersion")
-  interlokRuntime ("org.apache.logging.log4j:log4j-core:$log4j2Version")
-  interlokRuntime ("org.apache.logging.log4j:log4j-1.2-api:$log4j2Version")
-  interlokRuntime ("org.apache.logging.log4j:log4j-api:$log4j2Version")
-  interlokRuntime ("org.apache.logging.log4j:log4j-slf4j-impl:$log4j2Version")
   interlokRuntime ("org.fusesource.jansi:jansi:1.18")
 
-  interlokJavaDocs group: "com.adaptris", name: "interlok-core", version: "$interlokCoreVersion", changing: true, classifier: "javadoc", transitive: false
-  interlokJavaDocs group: "com.adaptris", name: "interlok-solace", version: "$interlokCoreVersion", changing: true, classifier: "javadoc", transitive: false
-  interlokJavaDocs group: "com.adaptris", name: "interlok-xa-jms", version: "$interlokCoreVersion", changing: true, classifier: "javadoc", transitive: false
-  interlokJavaDocs group: "com.adaptris", name: "interlok-xa-solace", version: "$interlokCoreVersion", changing: true, classifier: "javadoc", transitive: false
-  interlokJavaDocs group: "com.adaptris", name: "interlok-xa-activemq", version: "$interlokCoreVersion", changing: true, classifier: "javadoc", transitive: false
-  interlokJavaDocs group: "com.adaptris", name: "interlok-xa-atomikos", version: "$interlokCoreVersion", changing: true, classifier: "javadoc", transitive: false
+  interlokJavadocs group: "com.adaptris", name: "interlok-solace", version: "$interlokVersion", changing: true, classifier: "javadoc", transitive: false
+  interlokJavadocs group: "com.adaptris", name: "interlok-xa-jms", version: "$interlokVersion", changing: true, classifier: "javadoc", transitive: false
+  interlokJavadocs group: "com.adaptris", name: "interlok-xa-solace", version: "$interlokVersion", changing: true, classifier: "javadoc", transitive: false
+  interlokJavadocs group: "com.adaptris", name: "interlok-xa-activemq", version: "$interlokVersion", changing: true, classifier: "javadoc", transitive: false
+  interlokJavadocs group: "com.adaptris", name: "interlok-xa-atomikos", version: "$interlokVersion", changing: true, classifier: "javadoc", transitive: false
 
-  war ("com.adaptris.ui:interlok:$interlokCoreVersion@war") {changing=true}
-  verify files("$buildDir/install/${project.name}/config"){
-    builtBy 'installDist'
-  }  
-}
-
-distZip {
-  archiveName="${project.name}.zip"
-}
-
-distributions {
-  main {
-    contents {
-      from {
-        "src/main/interlok"
-      }
-      into('lib') {
-        from(project.configurations.interlokRuntime)
-      }
-      into('webapps') {
-        from(project.configurations.war)
-      }
-      into('docs/javadocs') {
-        from(project.configurations.interlokJavaDocs)
-      }      
-      // ovewrite the config files with custom ones.
-      into('config') {
-        from(localizeConfig)
-      }
-      // Exclude the localized property files
-      exclude "**/*.properties.*"
-      exclude "config/variables.properties"
-      exclude "**/*.xml.*"
-      rename '(.*)-[0-9]+\\..*.jar', '$1.jar'
-      rename '(.*)-[0-9]+\\..*.war', '$1.war'
-      duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    }
-  }
-}
-
-task interlokVersion(type: JavaExec, dependsOn: installDist) {
-  workingDir = new File("${buildDir}/install/${project.name}")
-  classpath {
-    [configurations.interlokRuntime.asPath]
-  }
-  main = 'com.adaptris.core.management.SimpleBootstrap'
-  args "-version"
-}
-
-task interlokVerifyConfig(type: JavaExec, dependsOn: interlokVersion) {
-  workingDir = new File("${buildDir}/install/${project.name}")
-  classpath {
-    [configurations.interlokRuntime.asPath, configurations.verify.asPath]
-  }
-  // Since we know we are doing variable substitution, let's hard-code some properties
-  // so that strict VarSub works.
-  systemProperty "SOLACE_USER", "admin"
-  systemProperty "SOLACE_PASSWORD", "admin"
-  systemProperty "SOLACE_HOST", "localhost"
-  systemProperty "SOLACE_PORT", "55555"
-  systemProperty "ACTIVEMQ_HOST", "localhost"
-  systemProperty "ACTIVEMQ_PORT", "616161"
-  main = 'com.adaptris.core.management.SimpleBootstrap'
-  args "-configtest"
-  args "config/bootstrap.properties"
 }
 
 docker {
   name dockerImageName
-  tags releaseVersion
-  pull true
+  tags dockerImageTag
   files tasks.installDist.outputs
+  pull true
+  noCache true
 }
 
 dockerCompose {
   dockerComposeFile "docker-compose.yml"
 }
 
-docker.dependsOn interlokVerifyConfig
+docker.dependsOn check, assemble
