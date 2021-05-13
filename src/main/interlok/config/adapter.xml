@@ -48,9 +48,7 @@
         <standard-workflow>
           <consumer class="xa-jms-consumer">
             <unique-id>activemq-consumer</unique-id>
-            <destination class="configured-consume-destination">
-              <destination>jms:queue:Sample.T1</destination>
-            </destination>
+            <endpoint>jms:queue:Sample.T1</endpoint>
             <max-batch>255</max-batch>
             <receive-wait>
               <unit>MILLISECONDS</unit>
@@ -83,12 +81,9 @@
           </service-collection>
           <producer class="xa-jms-producer">
             <unique-id>solace-producer</unique-id>
-            <destination class="configured-destination">
-              <destination>jms:topic:Sample.T2</destination>
-            </destination>
+            <endpoint>jms:topic:Sample.T2</endpoint>
             <message-translator class="text-message-translator"/>
             <session-factory class="jms-default-producer-xa-session"/>
-            <cache-destination>true</cache-destination>
             <xa-resource-name>solace-producer</xa-resource-name>
             <transaction-manager class="shared-transaction-manager">
               <lookup-name>TransactionManager</lookup-name>
@@ -110,9 +105,7 @@
         <pooling-workflow>
           <consumer class="jetty-message-consumer">
             <unique-id>suspicious-saha</unique-id>
-            <destination class="configured-consume-destination">
-              <destination>/api/to-activemq</destination>
-            </destination>
+            <path>/api/to-activemq</path>
             <parameter-handler class="jetty-http-ignore-parameters"/>
             <header-handler class="jetty-http-ignore-headers"/>
           </consumer>
@@ -121,9 +114,7 @@
             <services/>
           </service-collection>
           <producer class="jms-producer">
-            <destination class="configured-produce-destination">
-              <destination>jms:queue:Sample.T1</destination>
-            </destination>
+            <endpoint>jms:queue:Sample.T1</endpoint>
             <acknowledge-mode>CLIENT_ACKNOWLEDGE</acknowledge-mode>
             <message-translator class="text-message-translator"/>
             <delivery-mode>PERSISTENT</delivery-mode>
