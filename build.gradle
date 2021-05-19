@@ -28,7 +28,7 @@ ext {
   // we cater for that to 'check' work, w/o a license-docker.properties or similar.
   interlokLicense= project.findProperty('interlokLicense') ?: "false"
   interlokVerifySystemProperties = interlokLicense != "false" ? [ "interlok.license.key" : interlokLicense ] : [:]
-  solaceVersion='10.9.1'
+  solaceVersion='10.11.0'
 }
 
 
@@ -48,7 +48,7 @@ dependencies {
   interlokRuntime ("com.solacesystems:sol-common:$solaceVersion")
   interlokRuntime ("com.solacesystems:sol-jcsmp:$solaceVersion")
 
-  interlokRuntime ("org.fusesource.jansi:jansi:2.1.1")
+  interlokRuntime ("org.fusesource.jansi:jansi:2.3.2")
 
   interlokJavadocs group: "com.adaptris", name: "interlok-solace", version: "$interlokVersion", changing: true, classifier: "javadoc", transitive: false
   interlokJavadocs group: "com.adaptris", name: "interlok-xa-jms", version: "$interlokVersion", changing: true, classifier: "javadoc", transitive: false
