@@ -23,11 +23,6 @@ ext {
     ACTIVEMQ_HOST: "localhost",
     ACTIVEMQ_PORT: "61616"
   ]
-
-  // If running in a CI pipeline, then interlokLicense might be a secret so
-  // we cater for that to 'check' work, w/o a license-docker.properties or similar.
-  interlokLicense= project.findProperty('interlokLicense') ?: "false"
-  interlokVerifySystemProperties = interlokLicense != "false" ? [ "interlok.license.key" : interlokLicense ] : [:]
   solaceVersion='10.11.0'
 }
 

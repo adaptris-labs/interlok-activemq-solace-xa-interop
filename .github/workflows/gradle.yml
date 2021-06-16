@@ -37,6 +37,6 @@ jobs:
           ${{ runner.os }}-gradle-cache-
     - name: Gradle check
       env:
-        ORG_GRADLE_PROJECT_interlokLicense: ${{ secrets.INTERLOK_LICENSE_KEY }}
+        INTERLOK_LICENSE_KEY: ${{ secrets.INTERLOK_LICENSE_KEY }}
       run: |
         ./gradlew -Dorg.gradle.console=plain --no-daemon clean check
