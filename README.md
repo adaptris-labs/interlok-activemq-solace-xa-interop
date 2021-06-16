@@ -1,5 +1,4 @@
-# interlok-activemq-solace-xa-demo [![Actions Status](https://github.com/adaptris-labs/interlok-activemq-solace-xa-interop/workflows/check/badge.svg)](https://github.com/adaptris-labs/interlok-activemq-solace-xa-interop/actions)
-
+# interlok-activemq-solace-xa-demo [![check](https://github.com/adaptris-labs/interlok-activemq-solace-xa-interop/actions/workflows/gradle.yml/badge.svg)](https://github.com/adaptris-labs/interlok-activemq-solace-xa-interop/actions/workflows/gradle.yml)
 ## What is this
 
 This is an complete interlok instance which basically show-cases ActiveMQ to Solace using XA; Since the optional `interlok-solace` package requires a license you will need one of those.
