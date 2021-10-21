@@ -42,5 +42,5 @@ jobs:
     - name: Gradle check
       env:
         INTERLOK_LICENSE_KEY: ${{ secrets.INTERLOK_LICENSE_KEY }}
-      run: |
-        ./gradlew -Dorg.gradle.console=plain --no-daemon clean check
+        INTERLOK_LICENCE_KEY: ${{ secrets.INTERLOK_LICENSE_KEY }}
+      run: ./gradlew -Dorg.gradle.console=plain --no-daemon clean check
