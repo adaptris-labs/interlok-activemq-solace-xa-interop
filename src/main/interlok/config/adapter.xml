@@ -120,7 +120,6 @@
             <delivery-mode>PERSISTENT</delivery-mode>
             <session-factory class="jms-default-producer-session"/>
           </producer>
-          <produce-exception-handler class="null-produce-exception-handler"/>
           <unique-id>HTTP-to-ActiveMQ</unique-id>
         </pooling-workflow>
       </workflow-list>
