@@ -4,20 +4,9 @@
 
     <Console name="Console" target="SYSTEM_OUT">
       <PatternLayout>
-        <Pattern>%highlight{%-5p [%t] [%c{1.}] %m%n%throwable}{FATAL=bright white, ERROR=bright red, WARN=bright yellow, INFO=magenta, DEBUG=green, TRACE=cyan}</Pattern>
+        <Pattern>%-5p [%t] [%c{1.}] %m%n%throwable</Pattern>
       </PatternLayout>
     </Console>
-
-    <RollingFile name="RollingFile" fileName="logs/adapter.log" filePattern="logs/adapter.log.%i">
-      <PatternLayout>
-        <Pattern>%d{ISO8601} %-5p [%t] [%c{1.}] %m%n</Pattern>
-      </PatternLayout>
-      <Policies>
-        <OnStartupTriggeringPolicy />
-        <SizeBasedTriggeringPolicy size="10 MB"/>
-      </Policies>
-      <DefaultRolloverStrategy max="9" fileIndex="min"/>
-    </RollingFile>
 
     <JmxLogAppender name="JmxLogAppender-Debug">
       <PatternLayout>

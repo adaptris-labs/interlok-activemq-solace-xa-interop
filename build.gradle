@@ -43,8 +43,6 @@ dependencies {
   interlokRuntime ("com.solacesystems:sol-common:$solaceVersion")
   interlokRuntime ("com.solacesystems:sol-jcsmp:$solaceVersion")
 
-  interlokRuntime ("org.fusesource.jansi:jansi:2.3.4")
-
   interlokJavadocs group: "com.adaptris", name: "interlok-solace", version: "$interlokVersion", changing: true, classifier: "javadoc", transitive: false
   interlokJavadocs group: "com.adaptris", name: "interlok-xa-jms", version: "$interlokVersion", changing: true, classifier: "javadoc", transitive: false
   interlokJavadocs group: "com.adaptris", name: "interlok-xa-solace", version: "$interlokVersion", changing: true, classifier: "javadoc", transitive: false
