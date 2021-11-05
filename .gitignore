@@ -3,4 +3,5 @@ gradle.properties
 build
 license.properties.docker
 license-docker.properties
+license.properties
 .gradle
