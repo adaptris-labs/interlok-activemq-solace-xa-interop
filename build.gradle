@@ -23,7 +23,7 @@ ext {
     ACTIVEMQ_HOST: "localhost",
     ACTIVEMQ_PORT: "61616"
   ]
-  solaceVersion='10.13.0'
+  solaceVersion='10.13.1'
 }
 
 
